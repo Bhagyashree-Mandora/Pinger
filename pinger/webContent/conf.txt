@@ -1,0 +1,5 @@
+drop database if exists pingerpb;
+create database pingerpb;
+use pingerpb;
+drop table if exists Ping_logs;
+create table Ping_logs(Time_of_ping varchar(30), Processing_time varchar(20));

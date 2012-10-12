@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="Pinger" default="war">
+
+    <target
+        name="init"
+        depends="clean" >
+        <mkdir dir="dist" />
+        <mkdir dir="build" />
+        <mkdir dir="build/classes" />
+    </target>
+
+    <path id="compile.classpath" >
+        <fileset dir="serverLib" >
+            <include name="*.jar" />
+        </fileset>
+        <fileset dir="webContent/lib/" >
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <target name="compile" depends="init" >
+        <javac
+            debug="true"
+            destdir="build/classes"
+            srcdir="src/main/java" >
+            <classpath refid="compile.classpath" >
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="war" depends="compile" >
+        <war destfile="dist/Pinger.war" >
+            <fileset dir="webContent" ></fileset>
+            <classes dir="build/classes" ></classes>
+            <lib dir="webContent/lib" ></lib>
+        </war>
+    </target>
+
+    <target name="clean" >
+        <delete dir="dist" />
+        <delete dir="build" />
+    </target>
+
+</project>

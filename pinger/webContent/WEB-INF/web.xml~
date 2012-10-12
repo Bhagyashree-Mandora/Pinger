@@ -1,0 +1,57 @@
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+version="2.4">
+
+<welcome-file-list>
+    <welcome-file>
+        index.html
+    </welcome-file>
+</welcome-file-list>
+
+<display-name>Pinger</display-name>
+    <description>
+        This is a simple web application that accesses a web resource and shows the response time.
+    </description>
+    
+<servlet>
+	<servlet-name>PingServer</servlet-name>
+	<servlet-class>pinger.servlet.PingServer</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>PingServer</servlet-name>
+	<url-pattern>/ping.do</url-pattern>
+</servlet-mapping>
+
+ <listener>
+  	<listener-class>
+  		pinger.servlet.PingerContextListener
+  	</listener-class>
+  </listener>
+  
+ <context-param>
+    <description>This is mysql database url</description>
+    <param-name>urlToDatabase</param-name>
+    <param-value>jdbc:mysql://127.0.0.1/pingerpb</param-value>
+</context-param>
+
+ <context-param>
+    <description>This is mysql database user name</description>
+    <param-name>username</param-name>
+    <param-value>root</param-value>
+</context-param>
+
+<context-param>
+     <description>This is mysql database password</description>
+    <param-name>password</param-name>
+    <param-value>root</param-value>
+</context-param>   
+ 
+<context-param>
+     <description>This is mysql table</description>
+    <param-name>tableName</param-name>
+    <param-value>Ping_logs</param-value>
+</context-param>   
+
+</web-app>
