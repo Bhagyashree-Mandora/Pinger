@@ -10,47 +10,34 @@
 	</head>
 	<script type="text/javascript" src="lib/jQuery/jquery-1.8.2.min.js"></script>
 	<script type="text/javascript" src="lib/knockout/knockout-2.1.0.js"></script>
-	<script type="text/javascript" src="javascript/Pinger.js"></script>
-	<script type="text/javascript" src="javascript/PingerViewModel.js"></script>
+	<script type="text/javascript" src="javascript/pinger-min.js"></script>
 
 	</head>
 
 	<body>
 		<div id="wrapper">
-				<img class="pingDiv" id = "busySpinner" src="resources/busy1.gif"/>
-				<img class="pingDiv" id="activeBackground" src="resources/rectangle_button_blank_green.png" data-bind = "click: accessResource"/>
-				<img class="pingDiv" id="busyBackground" src="resources/rectangle_button_blank_red.png"/>
+			<img id = "busySpinner" src="resources/busy1.gif" data-bind = "visible: isBusy"/>
+			<img id="busyBackground" src="resources/rectangle_button_blank_red.png" data-bind = "visible: isBusy"/>
+			<img id="activeBackground" src="resources/rectangle_button_blank_green.png" data-bind = "click: accessResource, visible: !isBusy()"/>
 
-				<div class ="pingDiv pingResult">
-					<label data-bind="text: responseTime, click: accessResource" ></label>
-					<br/>
-					<label data-bind="text: procTime, click: accessResource"></label>
-					<br/>
-					<label data-bind="text: networkLatency, click: accessResource"></label>
-				</div>
+			<div id ="pingResult" data-bind="visible: !isBusy() && !isFailed(), click: accessResource">
+				<label data-bind="text: responseTimeText" ></label>
+				<br/>
+				<label data-bind="text: processingTimeText"></label>
+				<br/>
+				<label data-bind="text: networkLatencyText"></label>
+			</div>
 
-				<label class="pingDiv pingResult" id="buttonText" data-bind="text: buttonText, click: accessResource"></label>
-				<label class="pingDiv pingResult" id="errorMessage" data-bind="text: errorMessage, click: accessResource"></label>
-
+			<div data-bind = "click: accessResource">
+				<label id="buttonMessage" data-bind="text: buttonText, visible: !isBusy() && !isFailed()"></label>
+				<label id="errorMessage" data-bind="text: errorText, click: accessResource, visible: !isBusy() && isFailed()"></label>
+			</div>
 		</div>
 	</body>
+
 	<script>
 		$(document).ready(function() {
 			ko.applyBindings(PingerViewModel);
 		});
-
-		function turnViewBusy() {
-			$(".pingDiv.pingResult").css("visibility", "hidden");
-			$("#activeBackground").css("visibility", "hidden");
-			$("#busyBackground").css("visibility", "visible");
-			$("#busySpinner").css("visibility", "visible");
-		}
-
-		function turnViewActive() {
-			$("#busyBackground").css("visibility", "hidden");
-			$("#busySpinner").css("visibility", "hidden");
-			$("#activeBackground").css("visibility", "visible");
-			$(".pingDiv.pingResult").css("visibility", "visible");
-		}
 	</script>
 </html>

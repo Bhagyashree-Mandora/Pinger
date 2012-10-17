@@ -1,11 +1,7 @@
 var Pinger = {
 	startTime : "",
 
-	response : {
-		responseTime : "",
-		processingTime : "",
-		errorMessage : ""
-	},
+	listener: {onSuccess: {}, onError:{}},
 
 	_start : function() {
 		this.startTime = new Date().getTime();
@@ -14,47 +10,29 @@ var Pinger = {
 	_getTimeSinceStart : function() {
 		return Number(new Date().getTime()) - Number(this.startTime);
 	},
+	
+	addListener : function(listener){
+		Pinger.listener = listener;
+	},
 
 	ping : function(url) {
 		this._start();
 
-		var ajaxPromise = $.ajax({
+		$.ajax({
 			url : url,
 			cache : false,
-
-			timeout : 5000
-		});
-
-		var deffered = $.Deferred();
-		ajaxPromise.then(function(data) {
-
-			Pinger.response = {
+			timeout : 5000,
+			success: function(data){
+				Pinger.listener.onSuccess({
 				responseTime : Pinger._getTimeSinceStart(),
 				processingTime : data.processingTime,
 				errormessage : "noError"
-			};
-
-			deffered.resolve(Pinger.response);
-
-		}, function(jqxhr, strError) {
-
-			if (strError == 'timeout') {
-				Pinger.response = {
-				responseTime : "",
-				processingTime : "",
-				errormessage : "timeout"
-			};
-			} else {
-				Pinger.response = {
-				responseTime : "",
-				processingTime : "",
-				errormessage : "unavailable"
-			};
+			});
+			},
+			
+			error: function(jqXHR, message){
+				Pinger.listener.onError({jqXHR: jqXHR, errormessage: message});	
 			}
-
-			deffered.resolve(Pinger.response);
-		});
-		return deffered.promise();
-
+		})
 	}
 } 

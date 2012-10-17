@@ -1,54 +1,45 @@
-#wrapper{
+#wrapper {
 	margin-top: 5%;
 	margin-left: 30%;
 	position: relative;
 }
 
-
-.pingDiv.pingResult{
+#pingResult {
 	position: absolute;
 	margin-top: 35px;
 	margin-left: 50px;
-	visibility: hidden;
 	z-index: 1;
 }
 
-#busySpinner{
-	position:absolute;
+#busySpinner {
+	position: absolute;
 	margin-top: 55px;
 	margin-left: 190px;
-	visibility: hidden;
 	z-index: 1;
 }
 
-
-#activeBackground{
+#activeBackground {
 	position: absolute;
 	margin-top: 10px;
 	margin-left: 10px;
-	visibility: visible;
 	height: 130px;
 }
 
-#busyBackground{
+#busyBackground {
 	position: absolute;
 	margin-top: 10px;
 	margin-left: 10px;
-	visibility: hidden;
 	height: 130px;
 }
 
-#buttonText{
+#buttonMessage {
 	position: absolute;
-	visibility:visible;
 	margin-top: 100px;
-    margin-left: 165px;
+	margin-left: 165px;
 }
 
-
-#errorMessage{
+#errorMessage {
 	position: absolute;
-	visibility:visible;
 	margin-top: 100px;
-    margin-left: 65px;
+	margin-left: 65px;
 }

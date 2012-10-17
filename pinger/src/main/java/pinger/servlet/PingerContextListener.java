@@ -1,18 +1,20 @@
 package pinger.servlet;
 
+import java.sql.SQLException;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import pinger.logger.DatabaseDetails;
-import pinger.logger.MySQLRepositoryWriter;
+import pinger.logger.MySQLRepository;
 
 public class PingerContextListener implements ServletContextListener {
 	
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		
-		MySQLRepositoryWriter repositoryWriter;
+		MySQLRepository repositoryWriter;
 		
 		ServletContext servletContext = servletContextEvent.getServletContext();
 		String urlToDatabase = (String) servletContext.getInitParameter("urlToDatabase");
@@ -21,8 +23,13 @@ public class PingerContextListener implements ServletContextListener {
 		String tableName = (String) servletContext.getInitParameter("tableName");
 		DatabaseDetails mySQLDetails = new DatabaseDetails(urlToDatabase, username, password, tableName);
 		
-		repositoryWriter = new MySQLRepositoryWriter(mySQLDetails);
-		servletContext.setAttribute("repositoryWriter", repositoryWriter);    
+		try {
+			repositoryWriter = new MySQLRepository(mySQLDetails);
+			servletContext.setAttribute("repositoryWriter", repositoryWriter);    
+		} catch (ClassNotFoundException| SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

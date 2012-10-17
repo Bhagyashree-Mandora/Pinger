@@ -1,6 +1,7 @@
 package pinger.servlet;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Date;
 
 import javax.servlet.ServletConfig;
@@ -10,21 +11,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import pinger.logger.PingRepositoryWriter;
-
 import net.sf.json.JSONObject;
+import pinger.logger.PingRepository;
 
 public class PingServer extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
 	
-	private PingRepositoryWriter repositoryWriter;
+	private PingRepository repositoryWriter;
 	
 	@Override
     public void init(ServletConfig servletConfig) throws ServletException {
         ServletContext servletContext = servletConfig.getServletContext();
-        repositoryWriter = (PingRepositoryWriter) servletContext.getAttribute("repositoryWriter");
+        repositoryWriter = (PingRepository) servletContext.getAttribute("repositoryWriter");
     }
 	
 	
@@ -40,15 +40,25 @@ public class PingServer extends HttpServlet {
 			Thread.sleep(simulatedSleepTime);
 			
 			long processingTime = System.currentTimeMillis()-time;
-
-			repositoryWriter.write(new Ping(arrivedAt, processingTime));
 			
 			jSONResponse.put("processingTime", processingTime);
 			response.setContentType("application/json");
-			response.getWriter().write(jSONResponse.toString());
+			Writer writer = response.getWriter();
+			writer.write(jSONResponse.toString());
+			writer.flush();
+			
+			repositoryWriter.write(new Ping(arrivedAt, processingTime));
 
 		} catch (IOException | InterruptedException e1) {
 			e1.printStackTrace();
 		} 
 	}
+
+
+	@Override
+	public void destroy() {
+		repositoryWriter.closeConnection();
+	}
+	
+	
 }

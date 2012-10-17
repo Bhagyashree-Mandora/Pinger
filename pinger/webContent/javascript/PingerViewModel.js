@@ -1,46 +1,49 @@
 var PingerViewModel = {
 
 	buttonText : ko.observable("Ping Me!"),
-	responseTime : ko.observable(""),
-	procTime : ko.observable(""),
-	networkLatency : ko.observable(""),
-	errorMessage : ko.observable(""),
+	responseTimeText : ko.observable(""),
+	processingTimeText : ko.observable(""),
+	networkLatencyText : ko.observable(""),
+	isFailed : ko.observable(false),
+	errorText : ko.observable(""),
+	isBusy : ko.observable(false),
+	pinger : Pinger,
+
+	setPinger : function(pinger) {
+		PingerViewModel.pinger = pinger;
+	},
 
 	accessResource : function() {
+		PingerViewModel.isBusy(true);
+		PingerViewModel.pinger.addListener(PingerViewModel);
+		PingerViewModel.pinger.ping("ping.do");
+	},
 
-		turnViewBusy();
-		var response = Pinger.ping("ping.do");
+	onSuccess : function(result) {
+		PingerViewModel.isFailed(false);
 
-		response.done(function(result) {
+		var networkDelay = (result.responseTime - result.processingTime);
+		var percentNetworkDelay = (networkDelay / result.responseTime) * 100;
+		var percentProcessingTime = (result.processingTime / result.responseTime) * 100;
 
-			if (result.errormessage == "timeout") {
-				PingerViewModel.errorMessage("Request has timed out. Ping Again!");
-				PingerViewModel.buttonText("");
-				PingerViewModel.responseTime("");
-				PingerViewModel.procTime("");
-				PingerViewModel.networkLatency("");
-			} 
-			
-			if (result.errormessage == "unavailable") {
-				PingerViewModel.errorMessage("Request is unavailable. Ping Again!");
-				PingerViewModel.buttonText("");
-				PingerViewModel.responseTime("");
-				PingerViewModel.procTime("");
-				PingerViewModel.networkLatency("");
-			} 
-			
-			if(result.errormessage == "noError") {
-				PingerViewModel.errorMessage("");
-				var networkDelay = (result.responseTime - result.processingTime);
-				var percentNetworkDelay = (networkDelay / result.responseTime) * 100;
-				var percentProcTime = (result.processingTime / result.responseTime) * 100;
-				PingerViewModel.responseTime("response time: " + result.responseTime + " ms");
-				PingerViewModel.procTime("processing Time: " + result.processingTime + " ms [" + percentProcTime.toFixed(4) + "%]");
-				PingerViewModel.networkLatency("network delay: " + networkDelay + " ms [" + percentNetworkDelay.toFixed(4) + "%]");
-				PingerViewModel.buttonText("Ping Again!");
-			}
-			turnViewActive();
+		PingerViewModel.responseTimeText("response time: " + result.responseTime + " ms");
+		PingerViewModel.processingTimeText("processing Time: " + result.processingTime + " ms [" + percentProcessingTime.toFixed(4) + "%]");
+		PingerViewModel.networkLatencyText("network delay: " + networkDelay + " ms [" + percentNetworkDelay.toFixed(4) + "%]");
+		PingerViewModel.buttonText("Ping Again!");
+		PingerViewModel.isBusy(false);
+	},
 
-		});
+	onError : function(jqXHR, errormessage) {
+		PingerViewModel.isFailed(true);
+
+		if (jqXHR.errormessage == "timeout") {
+			PingerViewModel.errorText("Request has timed out. Ping Again!");
+		}
+
+		if (jqXHR.errormessage == "unavailable") {
+			PingerViewModel.errorText("Request is unavailable. Ping Again!");
+		}
+		PingerViewModel.isBusy(false);
 	}
 }
+

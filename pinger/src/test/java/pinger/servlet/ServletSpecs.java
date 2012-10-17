@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Test;
 
-import pinger.logger.PingRepositoryWriter;
+import pinger.logger.PingRepository;
 
 public class ServletSpecs {
 
@@ -29,7 +29,7 @@ public class ServletSpecs {
 		//given
 		HttpServletRequest ignoreRequest=mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
-		PingRepositoryWriter ignorePingRepositoryWriter =mock(PingRepositoryWriter.class);
+		PingRepository ignorePingRepositoryWriter =mock(PingRepository.class);
 		PrintWriter mockWriter = mock(PrintWriter.class);
 
 		ServletConfig mockConfig = mock(ServletConfig.class);
@@ -59,7 +59,7 @@ public class ServletSpecs {
 		
 		ServletConfig mockConfig = mock(ServletConfig.class);
         ServletContext mockServletContext = mock(ServletContext.class);
-        PingRepositoryWriter mockPingRepositoryWriter = mock(PingRepositoryWriter.class);
+        PingRepository mockPingRepositoryWriter = mock(PingRepository.class);
 
         given(response.getWriter()).willReturn(ignorePrintWriter);
         given(mockConfig.getServletContext()).willReturn(mockServletContext);

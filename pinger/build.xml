@@ -1,44 +1,149 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project name="Pinger" default="war">
+<project
+    name="Pinger"
+    default="war" >
 
     <target
         name="init"
         depends="clean" >
+
         <mkdir dir="dist" />
+
+        <mkdir dir="reports" />
+
         <mkdir dir="build" />
+
         <mkdir dir="build/classes" />
+
+        <mkdir dir="reports" />
     </target>
 
     <path id="compile.classpath" >
+
         <fileset dir="serverLib" >
+
             <include name="*.jar" />
         </fileset>
+
         <fileset dir="webContent/lib/" >
+
             <include name="*.jar" />
         </fileset>
     </path>
 
-    <target name="compile" depends="init" >
+    <target
+        name="compile"
+        depends="init" >
+
         <javac
             debug="true"
             destdir="build/classes"
-            srcdir="src/main/java" >
+            srcdir="src/" >
+
             <classpath refid="compile.classpath" >
             </classpath>
         </javac>
     </target>
 
-    <target name="war" depends="compile" >
-        <war destfile="dist/Pinger.war" >
-            <fileset dir="webContent" ></fileset>
-            <classes dir="build/classes" ></classes>
-            <lib dir="webContent/lib" ></lib>
-        </war>
+    <target
+        name="test"
+        depends="compile" >
+
+        <junit
+            haltonfailure="no"
+            printsummary="yes" >
+
+            <classpath refid="compile.classpath" />
+
+            <classpath path="build/classes" />
+
+            <formatter type="xml" />
+
+            <batchtest todir="reports" >
+
+                <fileset dir="build/classes" >
+
+                    <include name="**/*Specs*.*" />
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <junitreport todir="reports" >
+
+            <fileset dir="reports" >
+
+                <include name="TEST-*.xml" />
+            </fileset>
+
+            <report todir="reports" />
+        </junitreport>
     </target>
 
+    <target
+        name="jar"
+        depends="test" >
+
+        <jar destfile="dist/pingTrend.jar" >
+
+            <fileset dir="build/classes" >
+                <include name="**/*.class" />
+            </fileset>
+
+            <fileset dir="webContent/lib" >
+                <include name="mysql-connector-java-5.1.22-bin.jar" />
+            </fileset>
+
+            <archives>
+
+                <zips>
+
+                    <fileset
+                        dir="webContent/lib"
+                        includes="mysql-connector-java-5.1.22-bin.jar" />
+                </zips>
+            </archives>
+
+            <manifest>
+
+                <attribute
+                    name="Main-Class"
+                    value="pinger.statistics.PingTrend" />
+
+                <attribute
+                    name="Class-Path"
+                    value="." />
+            </manifest>
+        </jar>
+    </target>
+
+    <target
+        name="war"
+        depends="jar" >
+
+        <war destfile="dist/Pinger.war" >
+
+            <fileset dir="webContent" >
+            </fileset>
+
+            <classes dir="build/classes" >
+            </classes>
+
+            <classes dir="build/classes" >
+            </classes>
+
+            <lib dir="webContent/lib" >
+            </lib>
+        </war>
+    </target>
+    
+    
     <target name="clean" >
+
         <delete dir="dist" />
+
         <delete dir="build" />
+
+        <delete dir="reports" />
     </target>
 
 </project>
